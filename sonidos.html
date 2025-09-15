@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonidos - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html" class="active">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>🔊 Sonidos</h2>
+            <p>Agrega música, efectos de sonido y audio a tu juego</p>
+        </section>
+
+        <section>
+            <h3>🎵 Crear Sonidos</h3>
+            <p>Para crear un sonido, usa <code>game.sound()</code> con el nombre del archivo de audio:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program juegoConSonidos {
+    // Crear diferentes tipos de sonidos
+    const musicaFondo = game.sound("musica-fondo.mp3")
+    const sonidoMoneda = game.sound("moneda.wav")
+    const sonidoSalto = game.sound("salto.wav")
+    const sonidoExplosion = game.sound("explosion.wav")
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎵 Formatos de Audio Soportados</h4>
+                <ul>
+                    <li><strong>MP3</strong>: Para música de fondo (recomendado)</li>
+                    <li><strong>WAV</strong>: Para efectos de sonido (recomendado)</li>
+                    <li><strong>OGG</strong>: Alternativa libre a MP3</li>
+                    <li><strong>M4A</strong>: Formato de Apple</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>▶️ Reproducir Sonidos</h3>
+            <p>Para reproducir un sonido, usa el método <code>play()</code>:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program reproducirSonidos {
+    const musicaFondo = game.sound("musica-fondo.mp3")
+    const sonidoMoneda = game.sound("moneda.wav")
+    
+    // Reproducir música de fondo
+    musicaFondo.play()
+    
+    // Reproducir efecto de sonido
+    sonidoMoneda.play()
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>⚠️ Importante</h4>
+                <p>Los sonidos solo pueden reproducirse si el juego ya inició. Por eso debes usar <code>game.schedule()</code> para reproducir sonidos automáticamente al inicio.</p>
+            </div>
+        </section>
+
+        <section>
+            <h3>🔄 Sonidos en Bucle</h3>
+            <p>Puedes hacer que un sonido se repita indefinidamente usando <code>shouldLoop()</code>:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program musicaEnBucle {
+    const musicaFondo = game.sound("musica-fondo.mp3")
+    
+    // Configurar para que se repita
+    musicaFondo.shouldLoop(true)
+    
+    // Reproducir después de que inicie el juego
+    game.schedule(500, { musicaFondo.play() })
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎵 Usos del Bucle</h4>
+                <ul>
+                    <li><strong>Música de fondo</strong>: Para ambientar el juego</li>
+                    <li><strong>Efectos ambientales</strong>: Viento, lluvia, fuego</li>
+                    <li><strong>Sonidos de máquinas</strong>: Motores, generadores</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>⏸️ Controlar Sonidos</h3>
+            <p>Puedes pausar, reanudar y detener sonidos:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program controlarSonidos {
+    const musicaFondo = game.sound("musica-fondo.mp3")
+    const sonidoEfecto = game.sound("efecto.wav")
+    
+    // Configurar música de fondo
+    musicaFondo.shouldLoop(true)
+    game.schedule(500, { musicaFondo.play() })
+    
+    // Controles de teclado
+    keyboard.p().onPressDo({ musicaFondo.pause() })      // Pausar
+    keyboard.r().onPressDo({ musicaFondo.resume() })     // Reanudar
+    keyboard.s().onPressDo({ musicaFondo.stop() })       // Detener
+    keyboard.e().onPressDo({ sonidoEfecto.play() })      // Efecto
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎮 Controles de Audio</h4>
+                <ul>
+                    <li><strong>pause()</strong>: Pausa la reproducción</li>
+                    <li><strong>resume()</strong>: Reanuda desde donde se pausó</li>
+                    <li><strong>stop()</strong>: Detiene completamente</li>
+                    <li><strong>play()</strong>: Reproduce desde el inicio</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🔊 Controlar Volumen</h3>
+            <p>Puedes ajustar el volumen de los sonidos individualmente:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program controlarVolumen {
+    const musicaFondo = game.sound("musica-fondo.mp3")
+    const sonidoEfecto = game.sound("efecto.wav")
+    
+    // Configurar volúmenes
+    musicaFondo.volume(0.3)  // 30% del volumen
+    sonidoEfecto.volume(0.8) // 80% del volumen
+    
+    // Controles de volumen
+    keyboard.up().onPressDo({ 
+        musicaFondo.volume(1.0)  // Volumen máximo
+    })
+    keyboard.down().onPressDo({ 
+        musicaFondo.volume(0.0)  // Silenciar
+    })
+    keyboard.m().onPressDo({ 
+        musicaFondo.volume(0.5)  // Volumen medio
+    })
+    
+    game.schedule(500, { musicaFondo.play() })
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>📊 Escala de Volumen</h4>
+                <ul>
+                    <li><strong>0.0</strong>: Silenciado (0%)</li>
+                    <li><strong>0.5</strong>: Volumen medio (50%)</li>
+                    <li><strong>1.0</strong>: Volumen máximo (100%)</li>
+                    <li><strong>Valores intermedios</strong>: Cualquier valor entre 0 y 1</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎮 Juego Completo con Audio</h3>
+            <p>Un ejemplo completo que integra todos los elementos de audio:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class Heroe {
+    var position = game.at(5, 5)
+    var puntos = 0
+    method visual() = "hero.png"
+    
+    method recolectarMoneda() {
+        puntos = puntos + 10
+        game.say("¡+" + puntos + " puntos!")
+    }
+    
+    method saltar() {
+        game.say("¡Salto!")
+    }
+}
+
+program juegoConAudio {
+    // Configurar tablero
+    game.width(10)
+    game.height(7)
+    game.title("Juego con Audio")
+    
+    // Crear sonidos
+    const musicaFondo = game.sound("musica-fondo.mp3")
+    const sonidoMoneda = game.sound("moneda.wav")
+    const sonidoSalto = game.sound("salto.wav")
+    const sonidoVictoria = game.sound("victoria.wav")
+    
+    // Configurar música de fondo
+    musicaFondo.shouldLoop(true)
+    musicaFondo.volume(0.4)
+    
+    // Crear personaje
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Reproducir música al inicio
+    game.schedule(1000, { musicaFondo.play() })
+    
+    // Controles de movimiento
+    keyboard.right().onPressDo({ 
+        heroe.moverDerecha()
+        sonidoSalto.play()
+    })
+    keyboard.left().onPressDo({ 
+        heroe.moverIzquierda()
+        sonidoSalto.play()
+    })
+    
+    // Controles de acción
+    keyboard.space().onPressDo({ 
+        heroe.saltar()
+        sonidoSalto.play()
+    })
+    keyboard.c().onPressDo({ 
+        heroe.recolectarMoneda()
+        sonidoMoneda.play()
+    })
+    
+    // Controles de audio
+    keyboard.m().onPressDo({ musicaFondo.pause() })
+    keyboard.n().onPressDo({ musicaFondo.resume() })
+    keyboard.s().onPressDo({ musicaFondo.stop() })
+    keyboard.v().onPressDo({ sonidoVictoria.play() })
+    
+    // Controles de volumen
+    keyboard.plus().onPressDo({ 
+        musicaFondo.volume(musicaFondo.volume() + 0.1)
+    })
+    keyboard.minus().onPressDo({ 
+        musicaFondo.volume(musicaFondo.volume() - 0.1)
+    })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎵 Sistema de Audio Avanzado</h3>
+            <p>Puedes crear un sistema de audio más sofisticado:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class AudioManager {
+    var musicaFondo = game.sound("musica-fondo.mp3")
+    var sonidosEfectos = [
+        game.sound("moneda.wav"),
+        game.sound("salto.wav"),
+        game.sound("explosion.wav"),
+        game.sound("victoria.wav")
+    ]
+    var volumenGeneral = 0.7
+    
+    method inicializar() {
+        musicaFondo.shouldLoop(true)
+        musicaFondo.volume(volumenGeneral * 0.5)
+        game.schedule(1000, { musicaFondo.play() })
+    }
+    
+    method reproducirEfecto(indice) {
+        if (indice >= 0 && indice < sonidosEfectos.size()) {
+            sonidosEfectos[indice].volume(volumenGeneral)
+            sonidosEfectos[indice].play()
+        }
+    }
+    
+    method cambiarVolumen(nuevoVolumen) {
+        volumenGeneral = nuevoVolumen
+        musicaFondo.volume(volumenGeneral * 0.5)
+    }
+    
+    method pausarTodo() {
+        musicaFondo.pause()
+    }
+    
+    method reanudarTodo() {
+        musicaFondo.resume()
+    }
+}
+
+program juegoConAudioManager {
+    const audioManager = new AudioManager()
+    const heroe = new Heroe()
+    
+    game.addVisualCharacter(heroe)
+    audioManager.inicializar()
+    
+    // Controles de audio
+    keyboard.m().onPressDo({ audioManager.pausarTodo() })
+    keyboard.n().onPressDo({ audioManager.reanudarTodo() })
+    keyboard.plus().onPressDo({ 
+        audioManager.cambiarVolumen(audioManager.volumenGeneral + 0.1)
+    })
+    keyboard.minus().onPressDo({ 
+        audioManager.cambiarVolumen(audioManager.volumenGeneral - 0.1)
+    })
+    
+    // Efectos de sonido
+    keyboard.1().onPressDo({ audioManager.reproducirEfecto(0) })
+    keyboard.2().onPressDo({ audioManager.reproducirEfecto(1) })
+    keyboard.3().onPressDo({ audioManager.reproducirEfecto(2) })
+    keyboard.4().onPressDo({ audioManager.reproducirEfecto(3) })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💡 Consejos Importantes</h3>
+            <ul>
+                <li><strong>Usa archivos de audio pequeños</strong> para evitar demoras en la carga</li>
+                <li><strong>Prueba los sonidos</strong> antes de integrarlos al juego</li>
+                <li><strong>Considera el volumen</strong> de cada sonido individualmente</li>
+                <li><strong>Usa schedule()</strong> para reproducir sonidos automáticamente</li>
+                <li><strong>Planifica el audio</strong> como parte del diseño del juego</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que dominas el audio, puedes continuar con:</p>
+            <ul>
+                <li><a href="testing.html">🧪 Testing</a> - Prueba tu juego</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

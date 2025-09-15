@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimiento y Personajes - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html" class="active">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>🏃 Movimiento y Personajes</h2>
+            <p>Aprende a animar objetos y crear personajes que se muevan</p>
+        </section>
+
+        <section>
+            <h3>🎭 El Personaje Principal</h3>
+            <p>El personaje es un objeto especial que puede moverse por el tablero. Se agrega con <code>game.addVisualCharacter()</code> en lugar de <code>game.addVisual()</code>:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class Personaje {
+    var position = game.at(2, 3)
+    method visual() = "hero.png"
+}
+
+program miJuego {
+    const hero = new Personaje()
+    game.addVisualCharacter(hero)  // ¡Importante! Usar addVisualCharacter
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎯 Diferencias entre addVisual y addVisualCharacter</h4>
+                <ul>
+                    <li><strong>addVisual()</strong>: Para objetos estáticos (decoración, items)</li>
+                    <li><strong>addVisualCharacter()</strong>: Para el personaje principal que se mueve</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🔄 Movimiento Básico</h3>
+            <p>Para mover un objeto, simplemente cambia su posición:</p>
+
+            <div class="code-block">
+                <pre><code>class Personaje {
+    var position = game.at(2, 3)
+    method visual() = "hero.png"
+    
+    method moverDerecha() {
+        position = game.at(position.x() + 1, position.y())
+    }
+    
+    method moverIzquierda() {
+        position = game.at(position.x() - 1, position.y())
+    }
+    
+    method moverArriba() {
+        position = game.at(position.x(), position.y() - 1)
+    }
+    
+    method moverAbajo() {
+        position = game.at(position.x(), position.y() + 1)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>⌨️ Movimiento con Teclado</h3>
+            <p>Puedes hacer que el personaje se mueva con las flechas del teclado:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class Personaje {
+    var position = game.at(5, 5)
+    method visual() = "hero.png"
+    
+    method moverDerecha() {
+        position = game.at(position.x() + 1, position.y())
+    }
+    
+    method moverIzquierda() {
+        position = game.at(position.x() - 1, position.y())
+    }
+    
+    method moverArriba() {
+        position = game.at(position.x(), position.y() - 1)
+    }
+    
+    method moverAbajo() {
+        position = game.at(position.x(), position.y() + 1)
+    }
+}
+
+program juegoConMovimiento {
+    const hero = new Personaje()
+    game.addVisualCharacter(hero)
+    
+    // Configurar controles de teclado
+    keyboard.right().onPressDo({ hero.moverDerecha() })
+    keyboard.left().onPressDo({ hero.moverIzquierda() })
+    keyboard.up().onPressDo({ hero.moverArriba() })
+    keyboard.down().onPressDo({ hero.moverAbajo() })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎨 Animaciones con Visuales</h3>
+            <p>Puedes cambiar el visual del personaje según su estado de movimiento:</p>
+
+            <div class="code-block">
+                <pre><code>class Personaje {
+    var position = game.at(5, 5)
+    var direccion = "derecha"
+    
+    method visual() {
+        if (direccion == "derecha") {
+            "hero-derecha.png"
+        } else if (direccion == "izquierda") {
+            "hero-izquierda.png"
+        } else if (direccion == "arriba") {
+            "hero-arriba.png"
+        } else {
+            "hero-abajo.png"
+        }
+    }
+    
+    method moverDerecha() {
+        direccion = "derecha"
+        position = game.at(position.x() + 1, position.y())
+    }
+    
+    method moverIzquierda() {
+        direccion = "izquierda"
+        position = game.at(position.x() - 1, position.y())
+    }
+    
+    method moverArriba() {
+        direccion = "arriba"
+        position = game.at(position.x(), position.y() - 1)
+    }
+    
+    method moverAbajo() {
+        direccion = "abajo"
+        position = game.at(position.x(), position.y() + 1)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🚧 Límites del Tablero</h3>
+            <p>Es importante verificar que el personaje no se salga del tablero:</p>
+
+            <div class="code-block">
+                <pre><code>class Personaje {
+    var position = game.at(5, 5)
+    method visual() = "hero.png"
+    
+    method moverDerecha() {
+        if (position.x() < game.width() - 1) {
+            position = game.at(position.x() + 1, position.y())
+        }
+    }
+    
+    method moverIzquierda() {
+        if (position.x() > 0) {
+            position = game.at(position.x() - 1, position.y())
+        }
+    }
+    
+    method moverArriba() {
+        if (position.y() > 0) {
+            position = game.at(position.x(), position.y() - 1)
+        }
+    }
+    
+    method moverAbajo() {
+        if (position.y() < game.height() - 1) {
+            position = game.at(position.x(), position.y() + 1)
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🤖 Movimiento Automático</h3>
+            <p>Puedes hacer que los objetos se muevan automáticamente usando <code>game.schedule()</code>:</p>
+
+            <div class="code-block">
+                <pre><code>class Enemigo {
+    var position = game.at(8, 5)
+    var direccion = 1  // 1 = derecha, -1 = izquierda
+    method visual() = "enemy.png"
+    
+    method mover() {
+        position = game.at(position.x() + direccion, position.y())
+        
+        // Cambiar dirección en los bordes
+        if (position.x() >= game.width() - 1 || position.x() <= 0) {
+            direccion = direccion * -1
+        }
+    }
+}
+
+program juegoConEnemigo {
+    const enemigo = new Enemigo()
+    game.addVisual(enemigo)
+    
+    // Mover enemigo cada 500ms
+    game.schedule(500, { enemigo.mover() })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💬 Diálogos y Texto</h3>
+            <p>Los personajes pueden "hablar" mostrando mensajes:</p>
+
+            <div class="code-block">
+                <pre><code>class Personaje {
+    var position = game.at(5, 5)
+    method visual() = "hero.png"
+    
+    method saludar() {
+        game.say("¡Hola! Soy el héroe de este juego")
+    }
+    
+    method moverDerecha() {
+        position = game.at(position.x() + 1, position.y())
+        game.say("Me moví a la derecha")
+    }
+}
+
+program juegoConDialogos {
+    const hero = new Personaje()
+    game.addVisualCharacter(hero)
+    
+    // Saludar al inicio
+    game.schedule(1000, { hero.saludar() })
+    
+    // Controles
+    keyboard.right().onPressDo({ hero.moverDerecha() })
+    keyboard.h().onPressDo({ hero.saludar() })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎮 Ejemplo Completo</h3>
+            <p>Un juego completo con personaje, enemigo y movimiento:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class Heroe {
+    var position = game.at(2, 5)
+    method visual() = "hero.png"
+    
+    method moverDerecha() {
+        if (position.x() < game.width() - 1) {
+            position = game.at(position.x() + 1, position.y())
+        }
+    }
+    
+    method moverIzquierda() {
+        if (position.x() > 0) {
+            position = game.at(position.x() - 1, position.y())
+        }
+    }
+    
+    method moverArriba() {
+        if (position.y() > 0) {
+            position = game.at(position.x(), position.y() - 1)
+        }
+    }
+    
+    method moverAbajo() {
+        if (position.y() < game.height() - 1) {
+            position = game.at(position.x(), position.y() + 1)
+        }
+    }
+}
+
+class Enemigo {
+    var position = game.at(8, 3)
+    var direccion = 1
+    method visual() = "enemy.png"
+    
+    method mover() {
+        position = game.at(position.x() + direccion, position.y())
+        if (position.x() >= game.width() - 1 || position.x() <= 0) {
+            direccion = direccion * -1
+        }
+    }
+}
+
+program juegoCompleto {
+    game.width(10)
+    game.height(7)
+    game.title("Mi Juego de Aventura")
+    
+    const heroe = new Heroe()
+    const enemigo = new Enemigo()
+    
+    game.addVisualCharacter(heroe)
+    game.addVisual(enemigo)
+    
+    // Controles del héroe
+    keyboard.right().onPressDo({ heroe.moverDerecha() })
+    keyboard.left().onPressDo({ heroe.moverIzquierda() })
+    keyboard.up().onPressDo({ heroe.moverArriba() })
+    keyboard.down().onPressDo({ heroe.moverAbajo() })
+    
+    // Movimiento automático del enemigo
+    game.schedule(800, { enemigo.mover() })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💡 Consejos Importantes</h3>
+            <ul>
+                <li><strong>Usa addVisualCharacter()</strong> solo para el personaje principal</li>
+                <li><strong>Verifica límites</strong> antes de mover objetos</li>
+                <li><strong>Usa schedule()</strong> para movimiento automático</li>
+                <li><strong>Cambia visuales</strong> para crear animaciones</li>
+                <li><strong>Planifica la lógica</strong> de movimiento antes de implementar</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que sabes mover objetos, puedes continuar con:</p>
+            <ul>
+                <li><a href="interactividad.html">⚡ Interactividad</a> - Agrega colisiones y eventos</li>
+                <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a> - Personaliza la interfaz</li>
+                <li><a href="sonidos.html">🔊 Sonidos</a> - Agrega audio a tu juego</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

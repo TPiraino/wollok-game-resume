@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html" class="active">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>📚 Introducción a Wollok Game</h2>
+            <p>Todo lo que necesitas saber para empezar a crear juegos</p>
+        </section>
+
+        <section>
+            <h3>¿Qué es Wollok Game?</h3>
+            <p>Wollok-Game es una biblioteca de Wollok que sirve para crear juegos. La idea que propone es tener una especie de "tablero" en donde se puedan ubicar los objetos de algún programa de Wollok y éste se mostrará automáticamente en la pantalla.</p>
+            
+            <div class="example">
+                <h4>🎯 Concepto Clave</h4>
+                <p>Imagina un tablero de ajedrez donde puedes colocar objetos y estos se muestran automáticamente. ¡Eso es Wollok Game!</p>
+            </div>
+        </section>
+
+        <section>
+            <h3>🚀 Configuración Inicial</h3>
+            <p>Para usar Wollok Game, necesitas importar la biblioteca al inicio de cada archivo:</p>
+            
+            <div class="code-block">
+                <pre><code>import wollok.game.*</code></pre>
+            </div>
+
+            <h4>El objeto más importante: <code>game</code></h4>
+            <p>El objeto <code>game</code> es tu punto de entrada principal. Con él puedes:</p>
+            <ul>
+                <li>Iniciar el juego</li>
+                <li>Configurar el tablero</li>
+                <li>Agregar objetos visuales</li>
+                <li>Manejar eventos</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🎮 Iniciar un Juego</h3>
+            <p>Para comenzar un juego y visualizar el tablero, simplemente ejecuta:</p>
+            
+            <div class="code-block">
+                <pre><code>game.start()</code></pre>
+            </div>
+
+            <p>Esto abrirá una ventana independiente mostrando el tablero del juego.</p>
+        </section>
+
+        <section>
+            <h3>📝 Formas de Usar Wollok Game</h3>
+            
+            <h4>1. Por Consola (Sin archivo)</h4>
+            <div class="code-block">
+                <pre><code>>>> import wollok.game.*
+>>> game.start()</code></pre>
+            </div>
+
+            <h4>2. Con archivo .wlk</h4>
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+object prueba {
+    method iniciar() {
+        game.start()
+    }
+}</code></pre>
+            </div>
+            <p>Luego en la consola: <code>prueba.iniciar()</code></p>
+
+            <h4>3. Con programa .wpgm (Recomendado)</h4>
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program ejemplo {
+    game.start()
+}</code></pre>
+            </div>
+            <p>Se ejecuta directamente sin abrir la consola.</p>
+        </section>
+
+        <section>
+            <h3>⚙️ Configuración Básica del Tablero</h3>
+            <p>Antes de iniciar el juego, puedes configurar sus propiedades básicas:</p>
+            
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program miJuego {
+    game.width(10)        // Ancho en celdas
+    game.height(7)        // Alto en celdas
+    game.cellSize(50)     // Tamaño de cada celda en píxeles
+    game.title("Mi Juego") // Título de la ventana
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>📏 Propiedades del Tablero</h4>
+                <ul>
+                    <li><strong>width()</strong>: Ancho del tablero en celdas</li>
+                    <li><strong>height()</strong>: Alto del tablero en celdas</li>
+                    <li><strong>cellSize()</strong>: Tamaño de cada celda en píxeles (default: 50x50)</li>
+                    <li><strong>title()</strong>: Título de la ventana del juego</li>
+                    <li><strong>ground()</strong>: Imagen de fondo para las celdas</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎯 Características del Tablero</h3>
+            <ul>
+                <li><strong>Único</strong>: Solo puede haber un tablero por juego</li>
+                <li><strong>Dividido en celdas cuadradas</strong>: Todas las posiciones están en unidades de celdas</li>
+                <li><strong>No se puede estar "en el medio"</strong> de una celda</li>
+                <li><strong>Configurable</strong>: Puedes cambiar tamaño, título y fondo</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que sabes lo básico, puedes continuar con:</p>
+            <ul>
+                <li><a href="tablero.html">🎯 Tablero y Posiciones</a> - Aprende sobre el sistema de coordenadas</li>
+                <li><a href="objetos.html">🎨 Objetos Visuales</a> - Agrega sprites e imágenes a tu juego</li>
+                <li><a href="movimiento.html">🏃 Movimiento y Personajes</a> - Anima tus objetos</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

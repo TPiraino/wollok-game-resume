@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html" class="active">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>🧪 Testing</h2>
+            <p>Aprende a probar tu juego y hacer testing efectivo</p>
+        </section>
+
+        <section>
+            <h3>🔍 ¿Por qué Testing en Juegos?</h3>
+            <p>El testing en juegos es crucial para asegurar que:</p>
+            <ul>
+                <li>Los objetos se mueven correctamente</li>
+                <li>Las colisiones funcionan como esperado</li>
+                <li>Los eventos se disparan en el momento adecuado</li>
+                <li>El juego mantiene su estado correctamente</li>
+                <li>No hay errores que rompan la experiencia</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🧹 Limpiar el Estado del Juego</h3>
+            <p>Es importante limpiar el estado del juego entre tests para evitar interferencias:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+describe "Tests de Mi Juego" {
+    
+    method initialize() {
+        game.clear()  // ¡Importante! Limpiar el juego
+    }
+    
+    test "El personaje se mueve correctamente" {
+        const heroe = new Heroe()
+        game.addVisualCharacter(heroe)
+        
+        heroe.moverDerecha()
+        
+        assert.equals(heroe.position.x(), 1)
+    }
+    
+    test "Las colisiones funcionan" {
+        const heroe = new Heroe()
+        const moneda = new Moneda()
+        
+        game.addVisualCharacter(heroe)
+        game.addVisual(moneda)
+        
+        // Simular colisión
+        heroe.position = moneda.position
+        
+        // Verificar que se detecta la colisión
+        assert.that(heroe.colisionaCon(moneda))
+    }
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>⚠️ Problema sin game.clear()</h4>
+                <p>Sin <code>game.clear()</code>, los objetos de un test pueden interferir con otros tests, causando resultados impredecibles.</p>
+            </div>
+        </section>
+
+        <section>
+            <h3>🔇 Mocking de Sonidos</h3>
+            <p>Los sonidos no pueden reproducirse en tests, por lo que necesitas crear mocks:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+// Mock para sonidos
+object soundMock {
+    method pause() {}
+    method paused() = true
+    method play() {}
+    method played() = false
+    method resume() {}
+    method shouldLoop(looping) {}
+    method shouldLoop() = false
+    method stop() {}
+    method volume(newVolume) {}
+    method volume() = 0
+}
+
+// Mock para el proveedor de sonidos
+object soundProviderMock {
+    method sound(audioFile) = soundMock
+}
+
+// Productor de sonidos que puede cambiar de proveedor
+object soundProducer {
+    var provider = game
+    
+    method provider(_provider) {
+        provider = _provider
+    }
+    
+    method sound(audioFile) = provider.sound(audioFile)
+}
+
+describe "Tests con Sonidos" {
+    
+    method initialize() {
+        game.clear()
+        soundProducer.provider(soundProviderMock)  // Usar mock
+    }
+    
+    test "El personaje reproduce sonido al moverse" {
+        const heroe = new Heroe()
+        game.addVisualCharacter(heroe)
+        
+        // Esto no fallará porque usa el mock
+        heroe.moverConSonido()
+        
+        assert.that(true)  // Si llegamos aquí, el test pasó
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎮 Testing de Movimiento</h3>
+            <p>Prueba que los objetos se muevan correctamente:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+describe "Tests de Movimiento" {
+    
+    method initialize() {
+        game.clear()
+    }
+    
+    test "El personaje se mueve a la derecha" {
+        const heroe = new Heroe()
+        const posicionInicial = heroe.position.x()
+        
+        heroe.moverDerecha()
+        
+        assert.equals(heroe.position.x(), posicionInicial + 1)
+    }
+    
+    test "El personaje no se sale del tablero" {
+        const heroe = new Heroe()
+        heroe.position = game.at(game.width() - 1, 5)
+        
+        heroe.moverDerecha()
+        
+        assert.equals(heroe.position.x(), game.width() - 1)  // No cambió
+    }
+    
+    test "El personaje se mueve en todas las direcciones" {
+        const heroe = new Heroe()
+        const posicionInicial = heroe.position
+        
+        heroe.moverDerecha()
+        assert.equals(heroe.position.x(), posicionInicial.x() + 1)
+        
+        heroe.moverIzquierda()
+        assert.equals(heroe.position.x(), posicionInicial.x())
+        
+        heroe.moverAbajo()
+        assert.equals(heroe.position.y(), posicionInicial.y() + 1)
+        
+        heroe.moverArriba()
+        assert.equals(heroe.position.y(), posicionInicial.y())
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💥 Testing de Colisiones</h3>
+            <p>Prueba que las colisiones se detecten correctamente:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+describe "Tests de Colisiones" {
+    
+    method initialize() {
+        game.clear()
+    }
+    
+    test "Detecta colisión entre personaje y moneda" {
+        const heroe = new Heroe()
+        const moneda = new Moneda()
+        
+        // Posicionar en la misma celda
+        heroe.position = game.at(5, 5)
+        moneda.position = game.at(5, 5)
+        
+        assert.that(heroe.colisionaCon(moneda))
+    }
+    
+    test "No detecta colisión cuando están separados" {
+        const heroe = new Heroe()
+        const moneda = new Moneda()
+        
+        // Posicionar en celdas diferentes
+        heroe.position = game.at(5, 5)
+        moneda.position = game.at(6, 5)
+        
+        assert.that(!heroe.colisionaCon(moneda))
+    }
+    
+    test "El personaje recolecta monedas correctamente" {
+        const heroe = new Heroe()
+        const moneda = new Moneda()
+        const puntosIniciales = heroe.puntos
+        
+        heroe.position = moneda.position
+        heroe.recolectar(moneda)
+        
+        assert.equals(heroe.puntos, puntosIniciales + moneda.valor)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎯 Testing de Estados</h3>
+            <p>Prueba que los objetos mantengan su estado correctamente:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+describe "Tests de Estado" {
+    
+    method initialize() {
+        game.clear()
+    }
+    
+    test "El personaje mantiene su vida" {
+        const heroe = new Heroe()
+        const vidaInicial = heroe.vida
+        
+        heroe.recibirDano(20)
+        
+        assert.equals(heroe.vida, vidaInicial - 20)
+    }
+    
+    test "El personaje muere cuando la vida llega a 0" {
+        const heroe = new Heroe()
+        heroe.vida = 10
+        
+        heroe.recibirDano(10)
+        
+        assert.that(heroe.estaMuerto())
+    }
+    
+    test "El personaje gana puntos correctamente" {
+        const heroe = new Heroe()
+        const puntosIniciales = heroe.puntos
+        
+        heroe.ganarPuntos(50)
+        
+        assert.equals(heroe.puntos, puntosIniciales + 50)
+    }
+    
+    test "El personaje cambia de nivel" {
+        const heroe = new Heroe()
+        const nivelInicial = heroe.nivel
+        
+        heroe.ganarPuntos(1000)  // Asumiendo que 1000 puntos = nuevo nivel
+        
+        assert.equals(heroe.nivel, nivelInicial + 1)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>⏰ Testing de Eventos</h3>
+            <p>Prueba que los eventos se disparen correctamente:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+describe "Tests de Eventos" {
+    
+    method initialize() {
+        game.clear()
+    }
+    
+    test "El evento de colisión se dispara" {
+        const heroe = new Heroe()
+        const moneda = new Moneda()
+        var colisionDetectada = false
+        
+        game.addVisualCharacter(heroe)
+        game.addVisual(moneda)
+        
+        game.whenCollideDo(heroe, { elemento =>
+            if (elemento == moneda) {
+                colisionDetectada = true
+            }
+        })
+        
+        // Simular colisión
+        heroe.position = moneda.position
+        
+        assert.that(colisionDetectada)
+    }
+    
+    test "El evento de teclado se dispara" {
+        const heroe = new Heroe()
+        var teclaPresionada = false
+        
+        keyboard.space().onPressDo({ 
+            teclaPresionada = true
+        })
+        
+        // Simular presión de tecla
+        keyboard.space().press()
+        
+        assert.that(teclaPresionada)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎮 Testing de Juego Completo</h3>
+            <p>Prueba la integración de todos los elementos:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+describe "Tests de Juego Completo" {
+    
+    method initialize() {
+        game.clear()
+        soundProducer.provider(soundProviderMock)
+    }
+    
+    test "El juego se inicializa correctamente" {
+        const juego = new MiJuego()
+        
+        assert.that(juego.heroe != null)
+        assert.that(juego.enemigos.size() > 0)
+        assert.that(juego.monedas.size() > 0)
+    }
+    
+    test "El juego termina cuando el héroe muere" {
+        const juego = new MiJuego()
+        juego.heroe.vida = 0
+        
+        assert.that(juego.terminado())
+    }
+    
+    test "El juego termina cuando se recolectan todas las monedas" {
+        const juego = new MiJuego()
+        juego.monedas.forEach({ moneda => moneda.recolectada = true })
+        
+        assert.that(juego.terminado())
+    }
+    
+    test "El juego mantiene el estado entre acciones" {
+        const juego = new MiJuego()
+        const estadoInicial = juego.obtenerEstado()
+        
+        juego.heroe.moverDerecha()
+        juego.heroe.moverIzquierda()
+        
+        assert.equals(juego.obtenerEstado(), estadoInicial)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💡 Consejos para Testing</h3>
+            <ul>
+                <li><strong>Siempre usa game.clear()</strong> en el método initialize()</li>
+                <li><strong>Usa mocks para sonidos</strong> para evitar errores en tests</li>
+                <li><strong>Prueba casos límite</strong> como bordes del tablero</li>
+                <li><strong>Verifica el estado</strong> antes y después de cada acción</li>
+                <li><strong>Prueba la integración</strong> de todos los componentes</li>
+                <li><strong>Usa nombres descriptivos</strong> para tus tests</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔧 Herramientas de Testing</h3>
+            <p>Wollok proporciona varias herramientas para testing:</p>
+
+            <div class="example">
+                <h4>🧪 Herramientas Disponibles</h4>
+                <ul>
+                    <li><strong>assert.equals()</strong>: Verifica igualdad</li>
+                    <li><strong>assert.that()</strong>: Verifica condición booleana</li>
+                    <strong>assert.fail()</strong>: Falla el test con mensaje</li>
+                    <li><strong>describe</strong>: Agrupa tests relacionados</li>
+                    <li><strong>test</strong>: Define un test individual</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que dominas el testing, puedes:</p>
+            <ul>
+                <li>Crear juegos más robustos y confiables</li>
+                <li>Implementar funcionalidades complejas con confianza</li>
+                <li>Refactorizar código sabiendo que los tests lo respaldan</li>
+                <li>Colaborar con otros desarrolladores de manera más efectiva</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

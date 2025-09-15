@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Wollok Game - Universidad</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" class="active">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>¡Bienvenido a la Guía de Wollok Game!</h2>
+            <p>Esta guía te ayudará a crear juegos increíbles usando la biblioteca Wollok Game. Está diseñada especialmente para estudiantes universitarios.</p>
+        </section>
+
+        <section class="quick-start">
+            <h3>🚀 Inicio Rápido</h3>
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program miJuego {
+    game.width(10)
+    game.height(7)
+    game.title("Mi Primer Juego")
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="topics">
+            <h3>📖 Temas de la Guía</h3>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <h4>📚 Introducción</h4>
+                    <p>Conceptos básicos, instalación y configuración inicial</p>
+                    <a href="introduccion.html" class="btn">Ver más</a>
+                </div>
+                
+                <div class="topic-card">
+                    <h4>🎯 Tablero y Posiciones</h4>
+                    <p>Configuración del tablero, celdas y sistema de coordenadas</p>
+                    <a href="tablero.html" class="btn">Ver más</a>
+                </div>
+                
+                <div class="topic-card">
+                    <h4>🎨 Objetos Visuales</h4>
+                    <p>Sprites, imágenes y cómo agregar elementos al juego</p>
+                    <a href="objetos.html" class="btn">Ver más</a>
+                </div>
+                
+                <div class="topic-card">
+                    <h4>🏃 Movimiento y Personajes</h4>
+                    <p>Animar objetos, personajes principales y movimiento</p>
+                    <a href="movimiento.html" class="btn">Ver más</a>
+                </div>
+                
+                <div class="topic-card">
+                    <h4>⚡ Interactividad</h4>
+                    <p>Colisiones, eventos de teclado y interacción del usuario</p>
+                    <a href="interactividad.html" class="btn">Ver más</a>
+                </div>
+                
+                <div class="topic-card">
+                    <h4>🖼️ Fondos y Textos</h4>
+                    <p>Personalizar el fondo, mostrar textos y mensajes</p>
+                    <a href="fondos-textos.html" class="btn">Ver más</a>
+                </div>
+                
+                <div class="topic-card">
+                    <h4>🔊 Sonidos</h4>
+                    <p>Agregar música, efectos de sonido y audio al juego</p>
+                    <a href="sonidos.html" class="btn">Ver más</a>
+                </div>
+                
+                <div class="topic-card">
+                    <h4>🧪 Testing</h4>
+                    <p>Pruebas unitarias y testing de juegos</p>
+                    <a href="testing.html" class="btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="resources">
+            <h3>🔗 Recursos Adicionales</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+                <li><a href="https://github.com/uqbar-project/wollok" target="_blank">Repositorio en GitHub</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

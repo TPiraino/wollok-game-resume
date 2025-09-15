@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetos Visuales - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html" class="active">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>🎨 Objetos Visuales</h2>
+            <p>Aprende a agregar sprites, imágenes y elementos visuales a tu juego</p>
+        </section>
+
+        <section>
+            <h3>🎭 ¿Qué son los Objetos Visuales?</h3>
+            <p>Los objetos visuales son elementos que aparecen en el tablero del juego. Para que un objeto sea visual, debe entender el mensaje <code>position()</code> y retornar la posición donde se quiere mostrar.</p>
+            
+            <div class="example">
+                <h4>🎯 Concepto Clave</h4>
+                <p>Un objeto visual = Un objeto que sabe dónde está ubicado en el tablero</p>
+            </div>
+        </section>
+
+        <section>
+            <h3>📍 El Método position()</h3>
+            <p>Todo objeto visual debe implementar el método <code>position()</code> que retorna la posición donde se quiere mostrar:</p>
+
+            <div class="code-block">
+                <pre><code>object miObjeto {
+    var posicion = game.at(2, 3)
+    
+    method position() = posicion
+}</code></pre>
+            </div>
+
+            <h4>Usando position como propiedad</h4>
+            <div class="code-block">
+                <pre><code>object miObjeto {
+    const position = game.at(2, 3)  // Más simple
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🖼️ Visuales (Sprites)</h3>
+            <p>Los visuales definen qué imagen mostrar. Un objeto puede tener múltiples visuales para diferentes estados:</p>
+
+            <div class="code-block">
+                <pre><code>object personaje {
+    const position = game.at(5, 4)
+    
+    method visual() = "personaje.png"
+    
+    // O múltiples visuales
+    method visual() {
+        if (estaCorriendo()) {
+            "personaje-corriendo.png"
+        } else {
+            "personaje-quieto.png"
+        }
+    }
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎨 Tipos de Visuales</h4>
+                <ul>
+                    <li><strong>Personajes</strong>: Protagonistas del juego</li>
+                    <li><strong>Enemigos</strong>: Obstáculos y adversarios</li>
+                    <li><strong>Objetos</strong>: Items, monedas, power-ups</li>
+                    <li><strong>Decoración</strong>: Elementos del escenario</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>➕ Agregar Objetos al Juego</h3>
+            <p>Para que un objeto aparezca en el tablero, debes agregarlo usando <code>game.addVisual()</code>:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program miJuego {
+    // Crear objetos
+    const personaje = new Personaje()
+    const enemigo = new Enemigo()
+    const moneda = new Moneda()
+    
+    // Agregar al tablero
+    game.addVisual(personaje)
+    game.addVisual(enemigo)
+    game.addVisual(moneda)
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🏗️ Ejemplo Completo</h3>
+            <p>Un ejemplo completo con diferentes tipos de objetos:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+// Definir clases
+class Personaje {
+    var position = game.at(2, 3)
+    method visual() = "hero.png"
+}
+
+class Enemigo {
+    var position = game.at(8, 5)
+    method visual() = "enemy.png"
+}
+
+class Moneda {
+    var position = game.at(5, 2)
+    method visual() = "coin.png"
+}
+
+program juegoCompleto {
+    // Configurar tablero
+    game.width(10)
+    game.height(7)
+    game.title("Mi Juego")
+    
+    // Crear instancias
+    const hero = new Personaje()
+    const villain = new Enemigo()
+    const gold = new Moneda()
+    
+    // Agregar al juego
+    game.addVisual(hero)
+    game.addVisual(villain)
+    game.addVisual(gold)
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎭 Objetos con Múltiples Estados</h3>
+            <p>Puedes cambiar la apariencia de un objeto según su estado:</p>
+
+            <div class="code-block">
+                <pre><code>class Personaje {
+    var position = game.at(3, 4)
+    var corriendo = false
+    var herido = false
+    
+    method visual() {
+        if (herido) {
+            "personaje-herido.png"
+        } else if (corriendo) {
+            "personaje-corriendo.png"
+        } else {
+            "personaje-normal.png"
+        }
+    }
+    
+    method correr() {
+        corriendo = true
+    }
+    
+    method parar() {
+        corriendo = false
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>👻 Objetos Invisibles</h3>
+            <p>Puedes crear objetos que no se vean pero que estén presentes en el juego:</p>
+
+            <div class="code-block">
+                <pre><code>class TriggerInvisible {
+    var position = game.at(5, 5)
+    
+    method visual() = ""  // Sin imagen = invisible
+    
+    method activar() {
+        console.println("¡Trigger activado!")
+    }
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎯 Usos de Objetos Invisibles</h4>
+                <ul>
+                    <li><strong>Triggers</strong>: Activar eventos al pasar por encima</li>
+                    <li><strong>Zonas de colisión</strong>: Áreas especiales del mapa</li>
+                    <li><strong>Puntos de spawn</strong>: Donde aparecen enemigos</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🔄 Actualizar Visuales</h3>
+            <p>Para que los cambios en los visuales se reflejen, el juego se actualiza automáticamente. Si necesitas forzar una actualización:</p>
+
+            <div class="code-block">
+                <pre><code>// El juego se actualiza automáticamente
+// Pero puedes forzar actualización si es necesario
+game.refresh()</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💡 Consejos Importantes</h3>
+            <ul>
+                <li><strong>Nombres de archivos</strong>: Usa nombres descriptivos para tus imágenes</li>
+                <li><strong>Tamaño de imágenes</strong>: Deben caber en las celdas del tablero</li>
+                <li><strong>Formatos soportados</strong>: PNG, JPG, GIF</li>
+                <li><strong>Ruta de imágenes</strong>: Colócalas en la carpeta del proyecto</li>
+                <li><strong>Performance</strong>: No agregues demasiados objetos a la vez</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que sabes crear objetos visuales, puedes continuar con:</p>
+            <ul>
+                <li><a href="movimiento.html">🏃 Movimiento y Personajes</a> - Anima tus objetos</li>
+                <li><a href="interactividad.html">⚡ Interactividad</a> - Agrega colisiones y eventos</li>
+                <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a> - Personaliza la interfaz</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablero y Posiciones - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html" class="active">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>🎯 Tablero y Posiciones</h2>
+            <p>Domina el sistema de coordenadas y configuración del tablero</p>
+        </section>
+
+        <section>
+            <h3>🏗️ El Tablero</h3>
+            <p>El tablero es el corazón de tu juego. Es donde se ubican todos los objetos visuales y tiene características específicas:</p>
+            
+            <div class="example">
+                <h4>📋 Características del Tablero</h4>
+                <ul>
+                    <li><strong>Único</strong>: Solo puede haber un tablero por juego</li>
+                    <li><strong>Dividido en celdas cuadradas</strong>: Configurables con <code>game.cellSize(px)</code></li>
+                    <li><strong>Posiciones en unidades de celdas</strong>: No se puede estar "en el medio"</li>
+                    <li><strong>Configurable</strong>: Título, ancho, alto e imagen de fondo</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>⚙️ Configuración del Tablero</h3>
+            
+            <h4>Propiedades Básicas</h4>
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program configuracionTablero {
+    game.width(10)           // Ancho en celdas
+    game.height(7)           // Alto en celdas  
+    game.cellSize(50)        // Tamaño de celda en píxeles (default: 50x50)
+    game.title("Mi Juego")   // Título de la ventana
+    game.ground("fondo.png") // Imagen de fondo para las celdas
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>📏 Propiedades Disponibles</h4>
+                <ul>
+                    <li><code>game.width(celdas)</code> - Ancho del tablero</li>
+                    <li><code>game.height(celdas)</code> - Alto del tablero</li>
+                    <li><code>game.cellSize(píxeles)</code> - Tamaño de cada celda</li>
+                    <li><code>game.title(texto)</code> - Título de la ventana</li>
+                    <li><code>game.ground(imagen)</code> - Imagen de fondo de las celdas</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>📍 Sistema de Posiciones</h3>
+            <p>Las posiciones definen coordenadas x e y en el tablero. Son objetos que representan un punto específico.</p>
+
+            <h4>Crear Posiciones</h4>
+            <div class="code-block">
+                <pre><code>// Crear una posición específica
+const posicion = game.at(2, 3)  // x = 2, y = 3
+
+// Posiciones especiales
+const origen = game.origin()     // 0@0
+const centro = game.center()     // Se calcula automáticamente
+
+// Acceder a coordenadas
+posicion.x()  // 2
+posicion.y()  // 3</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎯 Posiciones Especiales</h4>
+                <ul>
+                    <li><code>game.origin()</code> - Esquina superior izquierda (0@0)</li>
+                    <li><code>game.center()</code> - Centro del tablero (calculado automáticamente)</li>
+                    <li><code>game.at(x, y)</code> - Posición específica en coordenadas x, y</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎨 Configurar Imagen de Fondo</h3>
+            <p>Puedes personalizar el aspecto de las celdas del tablero:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program tableroConFondo {
+    game.width(8)
+    game.height(6)
+    game.cellSize(60)
+    game.title("Tablero con Fondo")
+    game.ground("cesped.png")  // Imagen de fondo para cada celda
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🖼️ Tipos de Imágenes de Fondo</h4>
+                <ul>
+                    <li><strong>Cesped</strong>: Para juegos de aventura</li>
+                    <li><strong>Piedra</strong>: Para mazmorras</li>
+                    <li><strong>Agua</strong>: Para niveles acuáticos</li>
+                    <li><strong>Nieve</strong>: Para niveles invernales</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>📐 Ejemplo Completo</h3>
+            <p>Un ejemplo completo de configuración de tablero:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program ejemploCompleto {
+    // Configuración del tablero
+    game.width(12)
+    game.height(8)
+    game.cellSize(40)
+    game.title("Mi Primer Juego")
+    game.ground("tierra.png")
+    
+    // Crear algunas posiciones de ejemplo
+    const esquina = game.origin()
+    const centro = game.center()
+    const posicionEspecial = game.at(5, 3)
+    
+    // Mostrar información en consola
+    console.println("Esquina: " + esquina)
+    console.println("Centro: " + centro)
+    console.println("Posición especial: " + posicionEspecial)
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💡 Consejos Importantes</h3>
+            <ul>
+                <li><strong>Planifica el tamaño</strong>: Piensa en cuántos objetos necesitas antes de configurar el tablero</li>
+                <li><strong>Celdas cuadradas</strong>: El tablero siempre usa celdas cuadradas, no rectangulares</li>
+                <li><strong>Posiciones enteras</strong>: No puedes colocar objetos entre celdas</li>
+                <li><strong>Imágenes pequeñas</strong>: Las imágenes de fondo se repiten en cada celda</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que dominas el tablero, puedes continuar con:</p>
+            <ul>
+                <li><a href="objetos.html">🎨 Objetos Visuales</a> - Agrega sprites e imágenes a tu juego</li>
+                <li><a href="movimiento.html">🏃 Movimiento y Personajes</a> - Anima tus objetos</li>
+                <li><a href="interactividad.html">⚡ Interactividad</a> - Agrega colisiones y eventos</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fondos y Textos - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html" class="active">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>🖼️ Fondos y Textos</h2>
+            <p>Personaliza el aspecto visual y agrega textos informativos</p>
+        </section>
+
+        <section>
+            <h3>🎨 Cambiar el Fondo</h3>
+            <p>Puedes personalizar el fondo del tablero usando <code>game.ground()</code>:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program juegoConFondo {
+    game.width(10)
+    game.height(7)
+    game.title("Juego con Fondo Personalizado")
+    
+    // Cambiar el fondo del tablero
+    game.ground("cesped.png")
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🖼️ Tipos de Fondos Comunes</h4>
+                <ul>
+                    <li><strong>Cesped</strong>: Para juegos de aventura al aire libre</li>
+                    <li><strong>Piedra</strong>: Para mazmorras y castillos</li>
+                    <li><strong>Agua</strong>: Para niveles acuáticos</li>
+                    <li><strong>Nieve</strong>: Para niveles invernales</li>
+                    <li><strong>Arena</strong>: Para desiertos</li>
+                    <li><strong>Madera</strong>: Para interiores</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>💬 Mostrar Textos</h3>
+            <p>Puedes mostrar mensajes de texto en pantalla usando <code>game.say()</code>:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program juegoConTextos {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Mensaje simple
+    game.say("¡Bienvenido al juego!")
+    
+    // Mensaje con información del objeto
+    game.schedule(2000, {
+        game.say("Posición del héroe: " + heroe.position)
+    })
+    
+    // Mensaje con variables
+    var puntos = 0
+    game.schedule(5000, {
+        puntos = puntos + 10
+        game.say("Puntos: " + puntos)
+    })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎨 Colorear Textos</h3>
+            <p>Puedes cambiar el color de los textos usando <code>game.say()</code> con parámetros de color:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program textosColoridos {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Texto en diferentes colores
+    game.say("¡Texto rojo!", "red")
+    game.say("¡Texto azul!", "blue")
+    game.say("¡Texto verde!", "green")
+    game.say("¡Texto amarillo!", "yellow")
+    game.say("¡Texto blanco!", "white")
+    game.say("¡Texto negro!", "black")
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🌈 Colores Disponibles</h4>
+                <ul>
+                    <li><strong>Básicos</strong>: red, blue, green, yellow, white, black</li>
+                    <li><strong>Otros</strong>: orange, purple, pink, cyan, magenta</li>
+                    <li><strong>Sin color</strong>: Si no especificas color, usa el color por defecto</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🖼️ Imágenes con Texto</h3>
+            <p>Puedes combinar imágenes con texto para crear mensajes más visuales:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program imagenesConTexto {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Mostrar imagen con texto
+    game.say("¡Power-up!", "powerup.png")
+    game.say("¡Vida extra!", "vida.png")
+    game.say("¡Moneda!", "moneda.png")
+    
+    // Texto con imagen y color
+    game.say("¡Nivel completado!", "estrella.png", "gold")
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎨 Combinaciones Visuales</h4>
+                <ul>
+                    <li><strong>Iconos de estado</strong>: Corazones para vida, estrellas para puntos</li>
+                    <li><strong>Indicadores de acción</strong>: Flechas para movimiento, espadas para ataque</li>
+                    <li><strong>Elementos del juego</strong>: Monedas, gemas, power-ups</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>📊 Sistema de Información en Pantalla</h3>
+            <p>Puedes crear un sistema completo de información que se actualice constantemente:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class Heroe {
+    var position = game.at(5, 5)
+    var vida = 100
+    var puntos = 0
+    var nivel = 1
+    method visual() = "hero.png"
+    
+    method mostrarInfo() {
+        game.say("Nivel: " + nivel + " | Vida: " + vida + " | Puntos: " + puntos)
+    }
+    
+    method ganarPuntos(cantidad) {
+        puntos = puntos + cantidad
+        game.say("¡+" + cantidad + " puntos!", "moneda.png", "gold")
+    }
+    
+    method recibirDano(cantidad) {
+        vida = vida - cantidad
+        game.say("¡-" + cantidad + " vida!", "corazon.png", "red")
+        if (vida <= 0) {
+            game.say("¡Game Over!", "skull.png", "red")
+        }
+    }
+}
+
+program juegoConInfo {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Mostrar información cada 3 segundos
+    game.schedule(3000, { heroe.mostrarInfo() })
+    
+    // Controles para probar
+    keyboard.p().onPressDo({ heroe.ganarPuntos(10) })
+    keyboard.d().onPressDo({ heroe.recibirDano(20) })
+    keyboard.i().onPressDo({ heroe.mostrarInfo() })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎭 Diálogos y Conversaciones</h3>
+            <p>Puedes crear sistemas de diálogo más complejos:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class NPC {
+    var position = game.at(8, 3)
+    var nombre = "Merchant"
+    method visual() = "npc.png"
+    
+    method hablar() {
+        game.say("¡Hola, aventurero!", "npc.png", "blue")
+        game.schedule(2000, {
+            game.say("¿Necesitas algo?", "npc.png", "blue")
+        })
+        game.schedule(4000, {
+            game.say("Tengo objetos mágicos...", "npc.png", "blue")
+        })
+    }
+}
+
+program juegoConDialogos {
+    const heroe = new Heroe()
+    const npc = new NPC()
+    
+    game.addVisualCharacter(heroe)
+    game.addVisual(npc)
+    
+    // Hablar con NPC
+    keyboard.h().onPressDo({ npc.hablar() })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎨 Personalización Avanzada</h3>
+            <p>Puedes crear fondos dinámicos que cambien según el estado del juego:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+var nivelActual = 1
+var esNoche = false
+
+method cambiarFondo() {
+    if (esNoche) {
+        game.ground("noche.png")
+        game.say("¡Se hizo de noche!", "luna.png", "white")
+    } else {
+        game.ground("dia.png")
+        game.say("¡Amanece!", "sol.png", "yellow")
+    }
+    esNoche = !esNoche
+}
+
+method cambiarNivel() {
+    nivelActual = nivelActual + 1
+    if (nivelActual == 2) {
+        game.ground("bosque.png")
+        game.say("¡Entraste al bosque!", "arbol.png", "green")
+    } else if (nivelActual == 3) {
+        game.ground("cueva.png")
+        game.say("¡Descendiste a la cueva!", "piedra.png", "gray")
+    }
+}
+
+program juegoPersonalizado {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Cambiar entre día y noche cada 10 segundos
+    game.schedule(10000, { cambiarFondo() })
+    
+    // Cambiar nivel cada 30 segundos
+    game.schedule(30000, { cambiarNivel() })
+    
+    // Controles
+    keyboard.f().onPressDo({ cambiarFondo() })
+    keyboard.n().onPressDo({ cambiarNivel() })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>📱 Interfaz de Usuario</h3>
+            <p>Puedes crear una interfaz de usuario completa con información constante:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class UI {
+    method mostrarHUD(heroe) {
+        game.say("=== HUD ===")
+        game.say("Vida: " + heroe.vida + "/100", "corazon.png", "red")
+        game.say("Puntos: " + heroe.puntos, "moneda.png", "gold")
+        game.say("Nivel: " + heroe.nivel, "estrella.png", "yellow")
+        game.say("===========")
+    }
+    
+    method mostrarMenu() {
+        game.say("=== MENU ===")
+        game.say("H - Mostrar ayuda")
+        game.say("I - Mostrar información")
+        game.say("P - Pausar juego")
+        game.say("============")
+    }
+}
+
+program juegoConUI {
+    const heroe = new Heroe()
+    const ui = new UI()
+    
+    game.addVisualCharacter(heroe)
+    
+    // Mostrar HUD cada 5 segundos
+    game.schedule(5000, { ui.mostrarHUD(heroe) })
+    
+    // Controles de interfaz
+    keyboard.h().onPressDo({ ui.mostrarMenu() })
+    keyboard.i().onPressDo({ ui.mostrarHUD(heroe) })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💡 Consejos Importantes</h3>
+            <ul>
+                <li><strong>Usa colores consistentes</strong> para diferentes tipos de mensajes</li>
+                <li><strong>No satures la pantalla</strong> con demasiados textos</li>
+                <li><strong>Usa imágenes pequeñas</strong> para los iconos</li>
+                <li><strong>Planifica la interfaz</strong> antes de implementarla</li>
+                <li><strong>Prueba en diferentes tamaños</strong> de pantalla</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que dominas los fondos y textos, puedes continuar con:</p>
+            <ul>
+                <li><a href="sonidos.html">🔊 Sonidos</a> - Agrega audio a tu juego</li>
+                <li><a href="testing.html">🧪 Testing</a> - Prueba tu juego</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>

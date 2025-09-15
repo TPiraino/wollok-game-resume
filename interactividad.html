@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactividad - Guía Wollok Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Guía Wollok Game</h1>
+        <p>Documentación completa para crear juegos con Wollok</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="introduccion.html">📚 Introducción</a></li>
+            <li><a href="tablero.html">🎯 Tablero y Posiciones</a></li>
+            <li><a href="objetos.html">🎨 Objetos Visuales</a></li>
+            <li><a href="movimiento.html">🏃 Movimiento y Personajes</a></li>
+            <li><a href="interactividad.html" class="active">⚡ Interactividad</a></li>
+            <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a></li>
+            <li><a href="sonidos.html">🔊 Sonidos</a></li>
+            <li><a href="testing.html">🧪 Testing</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>⚡ Interactividad</h2>
+            <p>Agrega colisiones, eventos de teclado y interacción del usuario</p>
+        </section>
+
+        <section>
+            <h3>💥 Colisiones</h3>
+            <p>Las colisiones permiten detectar cuando dos objetos se encuentran en la misma posición:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program juegoConColisiones {
+    const heroe = new Heroe()
+    const moneda = new Moneda()
+    const enemigo = new Enemigo()
+    
+    game.addVisualCharacter(heroe)
+    game.addVisual(moneda)
+    game.addVisual(enemigo)
+    
+    // Colisión con moneda
+    game.whenCollideDo(heroe, { elemento =>
+        if (elemento == moneda) {
+            game.say("¡Recolectaste una moneda!")
+            // Aquí podrías eliminar la moneda o dar puntos
+        }
+    })
+    
+    // Colisión con enemigo
+    game.whenCollideDo(heroe, { elemento =>
+        if (elemento == enemigo) {
+            game.say("¡Te atacó un enemigo!")
+            // Aquí podrías quitar vidas o reiniciar
+        }
+    })
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎯 Tipos de Colisiones</h4>
+                <ul>
+                    <li><strong>Recolección</strong>: Recoger items, monedas, power-ups</li>
+                    <li><strong>Combate</strong>: Enfrentar enemigos</li>
+                    <li><strong>Obstáculos</strong>: Paredes, trampas</li>
+                    <li><strong>Triggers</strong>: Activar eventos especiales</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>⌨️ Eventos de Teclado</h3>
+            <p>Puedes responder a diferentes teclas del teclado:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program controlesAvanzados {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Flechas direccionales
+    keyboard.right().onPressDo({ heroe.moverDerecha() })
+    keyboard.left().onPressDo({ heroe.moverIzquierda() })
+    keyboard.up().onPressDo({ heroe.moverArriba() })
+    keyboard.down().onPressDo({ heroe.moverAbajo() })
+    
+    // Teclas de acción
+    keyboard.space().onPressDo({ heroe.saltar() })
+    keyboard.enter().onPressDo({ heroe.interactuar() })
+    
+    // Teclas de letras
+    keyboard.a().onPressDo({ heroe.atacar() })
+    keyboard.s().onPressDo({ heroe.usarHabilidad() })
+    keyboard.h().onPressDo({ heroe.mostrarAyuda() })
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>🎮 Teclas Disponibles</h4>
+                <ul>
+                    <li><strong>Flechas</strong>: <code>right()</code>, <code>left()</code>, <code>up()</code>, <code>down()</code></li>
+                    <li><strong>Especiales</strong>: <code>space()</code>, <code>enter()</code>, <code>escape()</code></li>
+                    <li><strong>Letras</strong>: <code>a()</code>, <code>b()</code>, <code>c()</code>, etc.</li>
+                    <li><strong>Números</strong>: <code>one()</code>, <code>two()</code>, <code>three()</code>, etc.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>⏰ Eventos Automáticos</h3>
+            <p>Puedes programar eventos que ocurran automáticamente:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+program eventosAutomaticos {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Evento que ocurre cada 2 segundos
+    game.schedule(2000, { 
+        game.say("¡Tiempo transcurrido!")
+    })
+    
+    // Evento que ocurre solo una vez después de 5 segundos
+    game.scheduleOnce(5000, {
+        game.say("¡5 segundos han pasado!")
+    })
+    
+    // Evento recurrente cada 1 segundo
+    game.schedule(1000, {
+        console.println("Tick: " + game.time())
+    })
+    
+    game.start()
+}</code></pre>
+            </div>
+
+            <div class="example">
+                <h4>⏱️ Tipos de Eventos Automáticos</h4>
+                <ul>
+                    <li><strong>schedule()</strong>: Evento que se repite cada X milisegundos</li>
+                    <li><strong>scheduleOnce()</strong>: Evento que ocurre solo una vez</li>
+                    <li><strong>game.time()</strong>: Obtiene el tiempo transcurrido del juego</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎯 Mostrar Atributos de Objetos</h3>
+            <p>Puedes mostrar información de los objetos en pantalla:</p>
+
+            <div class="code-block">
+                <pre><code>class Heroe {
+    var position = game.at(5, 5)
+    var vida = 100
+    var puntos = 0
+    method visual() = "hero.png"
+    
+    method mostrarEstado() {
+        game.say("Vida: " + vida + " | Puntos: " + puntos)
+    }
+    
+    method recibirDano(cantidad) {
+        vida = vida - cantidad
+        if (vida <= 0) {
+            game.say("¡Game Over!")
+        }
+    }
+    
+    method ganarPuntos(cantidad) {
+        puntos = puntos + cantidad
+        game.say("¡+" + cantidad + " puntos!")
+    }
+}
+
+program juegoConEstado {
+    const heroe = new Heroe()
+    game.addVisualCharacter(heroe)
+    
+    // Mostrar estado con tecla 'i'
+    keyboard.i().onPressDo({ heroe.mostrarEstado() })
+    
+    // Ganar puntos con tecla 'p'
+    keyboard.p().onPressDo({ heroe.ganarPuntos(10) })
+    
+    // Recibir daño con tecla 'd'
+    keyboard.d().onPressDo({ heroe.recibirDano(20) })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🎮 Juego Interactivo Completo</h3>
+            <p>Un ejemplo completo que combina todos los elementos de interactividad:</p>
+
+            <div class="code-block">
+                <pre><code>import wollok.game.*
+
+class Heroe {
+    var position = game.at(2, 5)
+    var vida = 100
+    var puntos = 0
+    method visual() = "hero.png"
+    
+    method moverDerecha() {
+        if (position.x() < game.width() - 1) {
+            position = game.at(position.x() + 1, position.y())
+        }
+    }
+    
+    method moverIzquierda() {
+        if (position.x() > 0) {
+            position = game.at(position.x() - 1, position.y())
+        }
+    }
+    
+    method atacar() {
+        game.say("¡Ataque!")
+    }
+    
+    method mostrarEstado() {
+        game.say("Vida: " + vida + " | Puntos: " + puntos)
+    }
+}
+
+class Moneda {
+    var position = game.at(8, 3)
+    method visual() = "coin.png"
+}
+
+class Enemigo {
+    var position = game.at(6, 2)
+    method visual() = "enemy.png"
+}
+
+program juegoInteractivo {
+    game.width(10)
+    game.height(7)
+    game.title("Juego Interactivo")
+    
+    const heroe = new Heroe()
+    const moneda = new Moneda()
+    const enemigo = new Enemigo()
+    
+    game.addVisualCharacter(heroe)
+    game.addVisual(moneda)
+    game.addVisual(enemigo)
+    
+    // Controles de movimiento
+    keyboard.right().onPressDo({ heroe.moverDerecha() })
+    keyboard.left().onPressDo({ heroe.moverIzquierda() })
+    
+    // Controles de acción
+    keyboard.a().onPressDo({ heroe.atacar() })
+    keyboard.i().onPressDo({ heroe.mostrarEstado() })
+    
+    // Colisiones
+    game.whenCollideDo(heroe, { elemento =>
+        if (elemento == moneda) {
+            heroe.ganarPuntos(10)
+            game.say("¡Moneda recolectada!")
+        } else if (elemento == enemigo) {
+            heroe.recibirDano(25)
+            game.say("¡Te atacó un enemigo!")
+        }
+    })
+    
+    // Evento automático cada 3 segundos
+    game.schedule(3000, {
+        game.say("¡Tiempo transcurrido!")
+    })
+    
+    game.start()
+}</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>🔧 Eventos Avanzados</h3>
+            <p>Puedes crear eventos más complejos combinando diferentes elementos:</p>
+
+            <div class="code-block">
+                <pre><code>// Sistema de power-ups
+class PowerUp {
+    var position = game.at(5, 5)
+    var tipo = "velocidad"
+    method visual() = "powerup.png"
+    
+    method activar(heroe) {
+        if (tipo == "velocidad") {
+            game.say("¡Velocidad aumentada!")
+            // Lógica para aumentar velocidad
+        } else if (tipo == "vida") {
+            game.say("¡Vida restaurada!")
+            // Lógica para restaurar vida
+        }
+    }
+}
+
+// Sistema de niveles
+var nivelActual = 1
+var enemigosDerrotados = 0
+
+method pasarNivel() {
+    nivelActual = nivelActual + 1
+    game.say("¡Nivel " + nivelActual + "!")
+    // Lógica para cambiar el nivel
+}
+
+// Verificar condición de victoria
+game.schedule(1000, {
+    if (enemigosDerrotados >= 5) {
+        pasarNivel()
+        enemigosDerrotados = 0
+    }
+})</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h3>💡 Consejos Importantes</h3>
+            <ul>
+                <li><strong>Planifica las colisiones</strong> antes de implementarlas</li>
+                <li><strong>Usa nombres descriptivos</strong> para los eventos</li>
+                <li><strong>Evita eventos muy frecuentes</strong> que puedan ralentizar el juego</li>
+                <li><strong>Prueba todos los controles</strong> antes de considerar el juego terminado</li>
+                <li><strong>Considera la experiencia del usuario</strong> al diseñar la interactividad</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>🔗 Próximos Pasos</h3>
+            <p>Ahora que dominas la interactividad, puedes continuar con:</p>
+            <ul>
+                <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a> - Personaliza la interfaz</li>
+                <li><a href="sonidos.html">🔊 Sonidos</a> - Agrega audio a tu juego</li>
+                <li><a href="testing.html">🧪 Testing</a> - Prueba tu juego</li>
+            </ul>
+        </section>
+
+        <section class="resources">
+            <h3>📚 Referencias</h3>
+            <ul>
+                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
+                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
+    </footer>
+</body>
+</html>
