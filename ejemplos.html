@@ -33,786 +33,268 @@
             <p>Juegos completos paso a paso con TDD y buenas prácticas</p>
         </section>
 
-        <section>
-            <h3>👻 Pacman Game - Ejemplo Completo</h3>
-            <p>Vamos a crear un juego de Pacman completo con 3 niveles, pantalla de inicio, y todas las funcionalidades de Wollok Game. Este ejemplo demuestra:</p>
-            
-            <ul>
-                <li>✅ <strong>TDD (Test-Driven Development)</strong> - Escribimos tests primero</li>
-                <li>✅ <strong>Modularización</strong> - Código organizado en clases</li>
-                <li>✅ <strong>Manejo de estados</strong> - Pantalla de inicio, juego, game over</li>
-                <li>✅ <strong>Múltiples niveles</strong> - 3 niveles con dificultad progresiva</li>
-                <li>✅ <strong>Sonidos y efectos</strong> - Audio completo</li>
-                <li>✅ <strong>Interactividad</strong> - Controles, colisiones, eventos</li>
-            </ul>
-        </section>
-
-        <section>
-            <h3>📋 Estructura del Proyecto</h3>
-            <p>Organizaremos el código en archivos separados para mantener la modularidad:</p>
-            
-            <div class="code-block">
-                <pre><code>pacman-game/
-├── pacman.wlk          // Clase principal del juego
-├── pacman.wpgm         // Programa principal
-├── entidades/
-│   ├── pacman.wlk      // Personaje principal
-│   ├── fantasma.wlk    // Enemigos
-│   ├── punto.wlk       // Puntos a recolectar
-│   └── powerup.wlk     // Power-ups especiales
-├── niveles/
-│   ├── nivel1.wlk      // Primer nivel
-│   ├── nivel2.wlk      // Segundo nivel
-│   └── nivel3.wlk      // Tercer nivel
-├── ui/
-│   ├── menu.wlk        // Pantalla de inicio
-│   └── hud.wlk         // Interfaz de usuario
-├── audio/
-│   └── audioManager.wlk // Gestión de sonidos
-└── tests/
-    ├── pacmanTests.wlk  // Tests del personaje
-    ├── fantasmaTests.wlk // Tests de fantasmas
-    └── juegoTests.wlk   // Tests del juego completo</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>🧪 Paso 1: Tests del Personaje Pacman</h3>
-            <p>Empezamos con TDD - escribimos los tests primero:</p>
-            
-            <div class="code-block">
-                <pre><code>import wollok.game.*
-
-describe "Tests de Pacman" {
-    
-    method initialize() {
-        game.clear()
-        soundProducer.provider(soundProviderMock)
-    }
-    
-    test "Pacman se crea en la posición correcta" {
-        const pacman = new Pacman(game.at(5, 5))
-        
-        assert.equals(pacman.position, game.at(5, 5))
-        assert.equals(pacman.vida, 3)
-        assert.equals(pacman.puntos, 0)
-    }
-    
-    test "Pacman se mueve correctamente" {
-        const pacman = new Pacman(game.at(5, 5))
-        
-        pacman.moverDerecha()
-        assert.equals(pacman.position.x(), 6)
-        
-        pacman.moverIzquierda()
-        assert.equals(pacman.position.x(), 5)
-        
-        pacman.moverAbajo()
-        assert.equals(pacman.position.y(), 6)
-        
-        pacman.moverArriba()
-        assert.equals(pacman.position.y(), 5)
-    }
-    
-    test "Pacman no se sale del tablero" {
-        const pacman = new Pacman(game.at(0, 5))
-        
-        pacman.moverIzquierda()
-        assert.equals(pacman.position.x(), 0) // No cambió
-        
-        pacman.moverDerecha()
-        assert.equals(pacman.position.x(), 1) // Sí cambió
-    }
-    
-    test "Pacman cambia dirección visualmente" {
-        const pacman = new Pacman(game.at(5, 5))
-        
-        pacman.moverDerecha()
-        assert.equals(pacman.direccion, "derecha")
-        
-        pacman.moverIzquierda()
-        assert.equals(pacman.direccion, "izquierda")
-    }
-    
-    test "Pacman pierde vida al ser tocado por fantasma" {
-        const pacman = new Pacman(game.at(5, 5))
-        const fantasma = new Fantasma(game.at(5, 5))
-        
-        pacman.colisionarCon(fantasma)
-        
-        assert.equals(pacman.vida, 2)
-        assert.that(pacman.estaVivo())
-    }
-    
-    test "Pacman muere cuando se queda sin vidas" {
-        const pacman = new Pacman(game.at(5, 5))
-        const fantasma = new Fantasma(game.at(5, 5))
-        
-        // Perder todas las vidas
-        pacman.colisionarCon(fantasma)
-        pacman.colisionarCon(fantasma)
-        pacman.colisionarCon(fantasma)
-        
-        assert.equals(pacman.vida, 0)
-        assert.that(!pacman.estaVivo())
-    }
-    
-    test "Pacman gana puntos al comer puntos" {
-        const pacman = new Pacman(game.at(5, 5))
-        const punto = new Punto(game.at(5, 5))
-        
-        pacman.comer(punto)
-        
-        assert.equals(pacman.puntos, 10)
-    }
-    
-    test "Pacman se vuelve invencible con power-up" {
-        const pacman = new Pacman(game.at(5, 5))
-        const powerup = new PowerUp(game.at(5, 5))
-        
-        pacman.comer(powerup)
-        
-        assert.that(pacman.esInvencible())
-    }
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>👻 Paso 2: Implementación del Personaje Pacman</h3>
-            <p>Ahora implementamos la clase Pacman basándonos en los tests:</p>
-            
-            <div class="code-block">
-                <pre><code>import wollok.game.*
-
-class Pacman {
-    var position
-    var vida = 3
-    var puntos = 0
-    var direccion = "derecha"
-    var invencible = false
-    var tiempoInvencible = 0
-    
-    method init(posicion) {
-        position = posicion
-    }
-    
-    method visual() {
-        if (invencible) {
-            "pacman-invencible.png"
-        } else if (direccion == "derecha") {
-            "pacman-derecha.png"
-        } else if (direccion == "izquierda") {
-            "pacman-izquierda.png"
-        } else if (direccion == "arriba") {
-            "pacman-arriba.png"
-        } else {
-            "pacman-abajo.png"
-        }
-    }
-    
-    method moverDerecha() {
-        if (position.x() < game.width() - 1) {
-            position = game.at(position.x() + 1, position.y())
-            direccion = "derecha"
-        }
-    }
-    
-    method moverIzquierda() {
-        if (position.x() > 0) {
-            position = game.at(position.x() - 1, position.y())
-            direccion = "izquierda"
-        }
-    }
-    
-    method moverArriba() {
-        if (position.y() > 0) {
-            position = game.at(position.x(), position.y() - 1)
-            direccion = "arriba"
-        }
-    }
-    
-    method moverAbajo() {
-        if (position.y() < game.height() - 1) {
-            position = game.at(position.x(), position.y() + 1)
-            direccion = "abajo"
-        }
-    }
-    
-    method colisionarCon(fantasma) {
-        if (!invencible) {
-            vida = vida - 1
-            if (vida <= 0) {
-                game.say("¡Game Over!", "skull.png", "red")
-            } else {
-                game.say("¡Vida perdida!", "corazon.png", "red")
-            }
-        }
-    }
-    
-    method comer(objeto) {
-        if (objeto.esPunto()) {
-            puntos = puntos + objeto.valor
-            game.say("¡+" + objeto.valor + " puntos!", "moneda.png", "gold")
-        } else if (objeto.esPowerUp()) {
-            invencible = true
-            tiempoInvencible = 5000 // 5 segundos
-            game.say("¡Invencible!", "star.png", "yellow")
-        }
-    }
-    
-    method estaVivo() = vida > 0
-    
-    method esInvencible() = invencible
-    
-    method actualizar() {
-        if (invencible) {
-            tiempoInvencible = tiempoInvencible - 16 // ~60 FPS
-            if (tiempoInvencible <= 0) {
-                invencible = false
-                game.say("Invencibilidad terminada")
-            }
-        }
-    }
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>👻 Paso 3: Tests y Implementación de Fantasmas</h3>
-            <p>Continuamos con TDD para los fantasmas:</p>
-            
-            <div class="code-block">
-                <pre><code>// Tests de Fantasmas
-describe "Tests de Fantasmas" {
-    
-    method initialize() {
-        game.clear()
-    }
-    
-    test "Fantasma se mueve automáticamente" {
-        const fantasma = new Fantasma(game.at(5, 5))
-        const posicionInicial = fantasma.position
-        
-        fantasma.mover()
-        
-        assert.that(fantasma.position != posicionInicial)
-    }
-    
-    test "Fantasma cambia dirección en los bordes" {
-        const fantasma = new Fantasma(game.at(0, 5))
-        fantasma.direccion = -1 // Izquierda
-        
-        fantasma.mover()
-        
-        assert.equals(fantasma.direccion, 1) // Cambió a derecha
-    }
-    
-    test "Fantasma persigue a Pacman" {
-        const fantasma = new Fantasma(game.at(5, 5))
-        const pacman = new Pacman(game.at(8, 5))
-        
-        fantasma.perseguir(pacman)
-        
-        // Debería moverse hacia la derecha (hacia Pacman)
-        assert.that(fantasma.position.x() > 5)
-    }
-}
-
-// Implementación de Fantasma
-class Fantasma {
-    var position
-    var direccion = 1 // 1 = derecha, -1 = izquierda
-    var velocidad = 500 // ms entre movimientos
-    var ultimoMovimiento = 0
-    
-    method init(posicion) {
-        position = posicion
-    }
-    
-    method visual() {
-        if (direccion == 1) {
-            "fantasma-derecha.png"
-        } else {
-            "fantasma-izquierda.png"
-        }
-    }
-    
-    method mover() {
-        if (game.time() - ultimoMovimiento >= velocidad) {
-            position = game.at(position.x() + direccion, position.y())
-            ultimoMovimiento = game.time()
-            
-            // Cambiar dirección en los bordes
-            if (position.x() >= game.width() - 1 || position.x() <= 0) {
-                direccion = direccion * -1
-            }
-        }
-    }
-    
-    method perseguir(pacman) {
-        if (pacman.position.x() > position.x()) {
-            direccion = 1
-        } else if (pacman.position.x() < position.x()) {
-            direccion = -1
-        }
-        mover()
-    }
-    
-    method colisionaCon(pacman) = position == pacman.position
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>🍎 Paso 4: Tests y Implementación de Puntos y Power-ups</h3>
-            <p>Implementamos los elementos que Pacman puede comer:</p>
-            
-            <div class="code-block">
-                <pre><code>// Tests de Puntos
-describe "Tests de Puntos" {
-    
-    test "Punto se crea correctamente" {
-        const punto = new Punto(game.at(3, 4))
-        
-        assert.equals(punto.position, game.at(3, 4))
-        assert.equals(punto.valor, 10)
-        assert.that(punto.esPunto())
-    }
-    
-    test "Punto se puede comer" {
-        const punto = new Punto(game.at(3, 4))
-        
-        assert.that(!punto.comido)
-        punto.comer()
-        assert.that(punto.comido)
-    }
-}
-
-// Tests de Power-ups
-describe "Tests de Power-ups" {
-    
-    test "Power-up se crea correctamente" {
-        const powerup = new PowerUp(game.at(5, 5))
-        
-        assert.equals(powerup.position, game.at(5, 5))
-        assert.that(powerup.esPowerUp())
-    }
-}
-
-// Implementación de Punto
-class Punto {
-    var position
-    var valor = 10
-    var comido = false
-    
-    method init(posicion) {
-        position = posicion
-    }
-    
-    method visual() {
-        if (comido) {
-            "" // Invisible cuando está comido
-        } else {
-            "punto.png"
-        }
-    }
-    
-    method comer() {
-        comido = true
-    }
-    
-    method esPunto() = true
-    method esPowerUp() = false
-}
-
-// Implementación de Power-up
-class PowerUp {
-    var position
-    var comido = false
-    
-    method init(posicion) {
-        position = posicion
-    }
-    
-    method visual() {
-        if (comido) {
-            ""
-        } else {
-            "powerup.png"
-        }
-    }
-    
-    method comer() {
-        comido = true
-    }
-    
-    method esPunto() = false
-    method esPowerUp() = true
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>🎮 Paso 5: Tests y Implementación del Juego Principal</h3>
-            <p>Ahora implementamos la lógica principal del juego:</p>
-            
-            <div class="code-block">
-                <pre><code>// Tests del Juego Principal
-describe "Tests del Juego Pacman" {
-    
-    method initialize() {
-        game.clear()
-        soundProducer.provider(soundProviderMock)
-    }
-    
-    test "Juego se inicializa correctamente" {
-        const juego = new PacmanGame()
-        
-        assert.that(juego.pacman != null)
-        assert.that(juego.fantasmas.size() > 0)
-        assert.that(juego.puntos.size() > 0)
-        assert.equals(juego.nivel, 1)
-    }
-    
-    test "Juego detecta colisiones" {
-        const juego = new PacmanGame()
-        juego.pacman.position = juego.fantasmas[0].position
-        
-        juego.verificarColisiones()
-        
-        assert.equals(juego.pacman.vida, 2) // Perdió una vida
-    }
-    
-    test "Juego pasa al siguiente nivel" {
-        const juego = new PacmanGame()
-        juego.puntos.forEach({ punto => punto.comer() })
-        
-        juego.verificarNivelCompletado()
-        
-        assert.equals(juego.nivel, 2)
-    }
-}
-
-// Implementación del Juego Principal
-class PacmanGame {
-    var pacman
-    var fantasmas = []
-    var puntos = []
-    var powerups = []
-    var nivel = 1
-    var estado = "menu" // menu, jugando, pausa, gameOver
-    var audioManager = new AudioManager()
-    
-    method init() {
-        game.width(20)
-        game.height(15)
-        game.title("Pacman Game")
-        game.ground("maze.png")
-        
-        audioManager.inicializar()
-        mostrarMenu()
-    }
-    
-    method mostrarMenu() {
-        estado = "menu"
-        game.say("=== PACMAN GAME ===", "pacman-logo.png", "yellow")
-        game.say("Presiona ESPACIO para jugar", "keyboard.png", "white")
-        game.say("Nivel: " + nivel, "star.png", "gold")
-        
-        keyboard.space().onPressDo({ iniciarJuego() })
-    }
-    
-    method iniciarJuego() {
-        estado = "jugando"
-        game.clear()
-        crearNivel()
-        configurarControles()
-        game.say("¡Nivel " + nivel + "!", "flag.png", "green")
-    }
-    
-    method crearNivel() {
-        // Crear Pacman
-        pacman = new Pacman(game.at(10, 7))
-        game.addVisualCharacter(pacman)
-        
-        // Crear fantasmas según el nivel
-        val cantidadFantasmas = 2 + nivel
-        for (var i = 0; i < cantidadFantasmas; i++) {
-            val fantasma = new Fantasma(game.at(5 + i * 3, 2))
-            fantasmas.add(fantasma)
-            game.addVisual(fantasma)
-        }
-        
-        // Crear puntos
-        puntos = []
-        for (var x = 1; x < game.width() - 1; x++) {
-            for (var y = 1; y < game.height() - 1; y++) {
-                if (Math.random() > 0.3) { // 70% de probabilidad
-                    val punto = new Punto(game.at(x, y))
-                    puntos.add(punto)
-                    game.addVisual(punto)
-                }
-            }
-        }
-        
-        // Crear power-ups (menos frecuentes)
-        for (var i = 0; i < 3; i++) {
-            val x = Math.random() * (game.width() - 2) + 1
-            val y = Math.random() * (game.height() - 2) + 1
-            val powerup = new PowerUp(game.at(x, y))
-            powerups.add(powerup)
-            game.addVisual(powerup)
-        }
-    }
-    
-    method configurarControles() {
-        keyboard.right().onPressDo({ pacman.moverDerecha() })
-        keyboard.left().onPressDo({ pacman.moverIzquierda() })
-        keyboard.up().onPressDo({ pacman.moverArriba() })
-        keyboard.down().onPressDo({ pacman.moverAbajo() })
-        keyboard.p().onPressDo({ pausarJuego() })
-        keyboard.r().onPressDo({ reanudarJuego() })
-    }
-    
-    method pausarJuego() {
-        if (estado == "jugando") {
-            estado = "pausa"
-            game.say("JUEGO PAUSADO", "pause.png", "yellow")
-            audioManager.pausarTodo()
-        }
-    }
-    
-    method reanudarJuego() {
-        if (estado == "pausa") {
-            estado = "jugando"
-            game.say("¡Continuar!", "play.png", "green")
-            audioManager.reanudarTodo()
-        }
-    }
-    
-    method actualizar() {
-        if (estado == "jugando") {
-            pacman.actualizar()
-            
-            // Mover fantasmas
-            fantasmas.forEach({ fantasma =>
-                fantasma.perseguir(pacman)
-            })
-            
-            verificarColisiones()
-            verificarNivelCompletado()
-            verificarGameOver()
-        }
-    }
-    
-    method verificarColisiones() {
-        // Colisión con fantasmas
-        fantasmas.forEach({ fantasma =>
-            if (fantasma.colisionaCon(pacman)) {
-                pacman.colisionarCon(fantasma)
-                audioManager.reproducirEfecto(2) // Sonido de colisión
-            }
-        })
-        
-        // Colisión con puntos
-        puntos.forEach({ punto =>
-            if (punto.position == pacman.position && !punto.comido) {
-                pacman.comer(punto)
-                punto.comer()
-                audioManager.reproducirEfecto(0) // Sonido de punto
-            }
-        })
-        
-        // Colisión con power-ups
-        powerups.forEach({ powerup =>
-            if (powerup.position == pacman.position && !powerup.comido) {
-                pacman.comer(powerup)
-                powerup.comer()
-                audioManager.reproducirEfecto(1) // Sonido de power-up
-            }
-        })
-    }
-    
-    method verificarNivelCompletado() {
-        val puntosComidos = puntos.count({ punto => punto.comido })
-        if (puntosComidos == puntos.size()) {
-            pasarNivel()
-        }
-    }
-    
-    method pasarNivel() {
-        nivel = nivel + 1
-        if (nivel > 3) {
-            game.say("¡FELICITACIONES! ¡JUEGO COMPLETADO!", "trophy.png", "gold")
-            audioManager.reproducirEfecto(3) // Sonido de victoria
-            estado = "gameOver"
-        } else {
-            game.say("¡Nivel " + nivel + " completado!", "star.png", "gold")
-            audioManager.reproducirEfecto(3)
-            iniciarJuego()
-        }
-    }
-    
-    method verificarGameOver() {
-        if (!pacman.estaVivo()) {
-            game.say("GAME OVER", "skull.png", "red")
-            audioManager.reproducirEfecto(4) // Sonido de game over
-            estado = "gameOver"
-            game.schedule(3000, { mostrarMenu() })
-        }
-    }
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>🔊 Paso 6: Sistema de Audio</h3>
-            <p>Implementamos el sistema de audio modular:</p>
-            
-            <div class="code-block">
-                <pre><code>// Audio Manager
-class AudioManager {
-    var sonidos = []
-    var musicaFondo = game.sound("pacman-theme.mp3")
-    var volumenGeneral = 0.7
-    
-    method init() {
-        sonidos = [
-            game.sound("punto.wav"),      // 0
-            game.sound("powerup.wav"),    // 1
-            game.sound("colision.wav"),   // 2
-            game.sound("victoria.wav"),   // 3
-            game.sound("gameover.wav")    // 4
-        ]
-    }
-    
-    method inicializar() {
-        musicaFondo.shouldLoop(true)
-        musicaFondo.volume(volumenGeneral * 0.3)
-        game.schedule(1000, { musicaFondo.play() })
-    }
-    
-    method reproducirEfecto(indice) {
-        if (indice >= 0 && indice < sonidos.size()) {
-            sonidos[indice].volume(volumenGeneral)
-            sonidos[indice].play()
-        }
-    }
-    
-    method pausarTodo() {
-        musicaFondo.pause()
-    }
-    
-    method reanudarTodo() {
-        musicaFondo.resume()
-    }
-    
-    method cambiarVolumen(nuevoVolumen) {
-        volumenGeneral = nuevoVolumen
-        musicaFondo.volume(volumenGeneral * 0.3)
-    }
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>🎮 Paso 7: Programa Principal</h3>
-            <p>Finalmente, el archivo principal que ejecuta todo:</p>
-            
-            <div class="code-block">
-                <pre><code>import wollok.game.*
-
-program pacmanGame {
-    const juego = new PacmanGame()
-    juego.init()
-    
-    // Loop principal del juego
-    game.schedule(16, { juego.actualizar() }) // ~60 FPS
-    
-    // Controles de audio
-    keyboard.plus().onPressDo({ 
-        juego.audioManager.cambiarVolumen(juego.audioManager.volumenGeneral + 0.1)
-    })
-    keyboard.minus().onPressDo({ 
-        juego.audioManager.cambiarVolumen(juego.audioManager.volumenGeneral - 0.1)
-    })
-    keyboard.m().onPressDo({ juego.audioManager.pausarTodo() })
-    keyboard.n().onPressDo({ juego.audioManager.reanudarTodo() })
-    
-    game.start()
-}</code></pre>
-            </div>
-        </section>
-
-        <section>
-            <h3>📚 Cómo Usar Cada Guía en Este Ejemplo</h3>
-            <p>Este ejemplo demuestra el uso de todas las guías anteriores:</p>
-            
-            <div class="example">
-                <h4>🎯 Aplicación de las Guías</h4>
-                <ul>
-                    <li><strong><a href="introduccion.html">Introducción</a></strong>: Import de wollok.game.*, game.start()</li>
-                    <li><strong><a href="tablero.html">Tablero</a></strong>: game.width(), game.height(), game.ground()</li>
-                    <li><strong><a href="objetos.html">Objetos Visuales</a></strong>: position(), visual(), addVisual()</li>
-                    <li><strong><a href="movimiento.html">Movimiento</a></strong>: addVisualCharacter(), controles de teclado</li>
-                    <li><strong><a href="interactividad.html">Interactividad</a></strong>: colisiones, eventos, schedule()</li>
-                    <li><strong><a href="fondos-textos.html">Fondos y Textos</a></strong>: game.say(), colores, imágenes</li>
-                    <li><strong><a href="sonidos.html">Sonidos</a></strong>: AudioManager, efectos de sonido</li>
-                    <li><strong><a href="testing.html">Testing</a></strong>: Tests completos con TDD</li>
+        <section class="wip-container">
+            <div class="wip-card">
+                <div class="wip-icon">🚧</div>
+                <h3>¡Work in Progress!</h3>
+                <p>Esta sección está en desarrollo. Pronto tendrás acceso a:</p>
+                <ul class="wip-features">
+                    <li>🎮 Juegos completos paso a paso</li>
+                    <li>🧪 Ejemplos con TDD (Test-Driven Development)</li>
+                    <li>📚 Tutoriales detallados</li>
+                    <li>💡 Mejores prácticas de programación</li>
+                    <li>🎯 Proyectos reales y funcionales</li>
                 </ul>
+                <div class="wip-status">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p class="progress-text">Desarrollo en progreso...</p>
+                </div>
             </div>
         </section>
 
-        <section>
-            <h3>🚀 Cómo Ejecutar el Juego</h3>
-            <ol>
-                <li><strong>Crear los archivos</strong> en tu proyecto Wollok</li>
-                <li><strong>Agregar las imágenes</strong> (pacman-derecha.png, fantasma.png, etc.)</li>
-                <li><strong>Agregar los sonidos</strong> (pacman-theme.mp3, punto.wav, etc.)</li>
-                <li><strong>Ejecutar pacman.wpgm</strong></li>
-                <li><strong>¡Disfrutar del juego!</strong> 🎮</li>
-            </ol>
+        <section class="coming-soon">
+            <h3>🔮 ¿Qué viene próximamente?</h3>
+            <div class="coming-soon-grid">
+                <div class="coming-soon-card">
+                    <div class="card-icon">👻</div>
+                    <h4>Pacman Game</h4>
+                    <p>Un juego completo de Pacman con 3 niveles, sistema de vidas, power-ups y audio completo.</p>
+                </div>
+                
+                <div class="coming-soon-card">
+                    <div class="card-icon">🐍</div>
+                    <h4>Snake Game</h4>
+                    <p>El clásico juego de la serpiente con crecimiento, colisiones y sistema de puntuación.</p>
+                </div>
+                
+                <div class="coming-soon-card">
+                    <div class="card-icon">🧩</div>
+                    <h4>Puzzle Game</h4>
+                    <p>Un juego de rompecabezas con diferentes niveles de dificultad y mecánicas únicas.</p>
+                </div>
+                
+                <div class="coming-soon-card">
+                    <div class="card-icon">🎯</div>
+                    <h4>Arcade Collection</h4>
+                    <p>Una colección de mini-juegos arcade con diferentes mecánicas y estilos de juego.</p>
+                </div>
+            </div>
         </section>
 
-        <section>
-            <h3>💡 Características Avanzadas Implementadas</h3>
-            <ul>
-                <li><strong>Múltiples niveles</strong> con dificultad progresiva</li>
-                <li><strong>Sistema de vidas</strong> y game over</li>
-                <li><strong>Power-ups temporales</strong> (invencibilidad)</li>
-                <li><strong>IA básica</strong> para fantasmas (persecución)</li>
-                <li><strong>Sistema de puntuación</strong> completo</li>
-                <li><strong>Pausa y reanudación</strong> del juego</li>
-                <li><strong>Audio completo</strong> con música y efectos</li>
-                <li><strong>Interfaz de usuario</strong> informativa</li>
-            </ul>
-        </section>
-
-        <section>
-            <h3>🔗 Próximos Pasos</h3>
-            <p>Puedes extender este ejemplo agregando:</p>
-            <ul>
-                <li>Más tipos de power-ups</li>
-                <li>Diferentes tipos de fantasmas</li>
-                <li>Laberintos más complejos</li>
-                <li>Sistema de high scores</li>
-                <li>Animaciones más fluidas</li>
-                <li>Efectos visuales especiales</li>
-            </ul>
+        <section class="stay-tuned">
+            <h3>📢 Mantente al día</h3>
+            <p>Esta sección se actualizará regularmente con nuevos ejemplos y tutoriales. ¡Vuelve pronto para ver el contenido completo!</p>
+            
+            <div class="social-links">
+                <a href="https://www.wollok.org/" target="_blank" class="social-link">
+                    🌐 Sitio Web de Wollok
+                </a>
+                <a href="https://github.com/uqbar-project/wollok" target="_blank" class="social-link">
+                    💻 Repositorio en GitHub
+                </a>
+            </div>
         </section>
 
         <section class="resources">
-            <h3>📚 Referencias</h3>
+            <h3>📚 Mientras tanto...</h3>
+            <p>Puedes explorar las otras secciones de la guía:</p>
             <ul>
-                <li><a href="https://www.wollok.org/documentation/wollok_game/" target="_blank">Documentación Oficial de Wollok Game</a></li>
-                <li><a href="https://www.wollok.org/" target="_blank">Sitio Web de Wollok</a></li>
+                <li><a href="introduccion.html">📚 Introducción</a> - Conceptos básicos</li>
+                <li><a href="tablero.html">🎯 Tablero y Posiciones</a> - Sistema de coordenadas</li>
+                <li><a href="objetos.html">🎨 Objetos Visuales</a> - Sprites e imágenes</li>
+                <li><a href="movimiento.html">🏃 Movimiento y Personajes</a> - Animación</li>
+                <li><a href="interactividad.html">⚡ Interactividad</a> - Colisiones y eventos</li>
+                <li><a href="fondos-textos.html">🖼️ Fondos y Textos</a> - Personalización visual</li>
+                <li><a href="sonidos.html">🔊 Sonidos</a> - Audio y música</li>
+                <li><a href="testing.html">🧪 Testing</a> - Pruebas unitarias</li>
             </ul>
         </section>
+
+
     </main>
 
     <footer>
         <p>Guía creada para estudiantes universitarios • Basada en la documentación oficial de Wollok</p>
     </footer>
+
+    <style>
+        .wip-container {
+            display: flex;
+            justify-content: center;
+            margin: 3rem 0;
+        }
+
+        .wip-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .wip-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .wip-card h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .wip-features {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .wip-features li {
+            padding: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .wip-status {
+            margin-top: 2rem;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            background: #4ade80;
+            height: 100%;
+            width: 65%;
+            border-radius: 4px;
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 65%; }
+            100% { width: 65%; }
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .coming-soon {
+            margin: 4rem 0;
+        }
+
+        .coming-soon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .coming-soon-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .coming-soon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .coming-soon-card h4 {
+            color: #4a5568;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .coming-soon-card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        .stay-tuned {
+            background: #f7fafc;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            background: #667eea;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .wip-card {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+            
+            .coming-soon-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
 </body>
 </html>
